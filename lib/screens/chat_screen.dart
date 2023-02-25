@@ -95,8 +95,11 @@ class _ChatScreenState extends State<ChatScreen> {
                         focusNode: focusNode,
                         style: const TextStyle(color: Colors.white),
                         controller: textEditingController,
-                        onSubmitted: (value) {
-                          // TD-DO 메세지 보내기
+                        onSubmitted: (value) async {
+                          await sendMessageGPT(
+                            modelsProvider: modelsProvider,
+                            chatsProvider: chatsProvider,
+                          );
                         },
                         decoration: const InputDecoration.collapsed(
                           hintText: "무엇을 도와드릴까요?",
