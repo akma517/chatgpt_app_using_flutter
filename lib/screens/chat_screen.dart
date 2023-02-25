@@ -1,10 +1,8 @@
 import 'dart:developer';
 
 import 'package:chatgpt_app_using_flutter/constants/constants.dart';
-import 'package:chatgpt_app_using_flutter/models/chat_model.dart';
 import 'package:chatgpt_app_using_flutter/providers/chats_provider.dart';
 import 'package:chatgpt_app_using_flutter/providers/models_provider.dart';
-import 'package:chatgpt_app_using_flutter/services/api_service.dart';
 import 'package:chatgpt_app_using_flutter/services/assets_manager.dart';
 import 'package:chatgpt_app_using_flutter/services/services.dart';
 import 'package:chatgpt_app_using_flutter/widgets/chat_widget.dart';
@@ -21,16 +19,15 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  bool _isTyping = false;
   late TextEditingController textEditingController;
   late FocusNode focusNode;
-  late ScrollController _scrollController;
+  late ScrollController scrollController;
 
   @override
   void initState() {
     textEditingController = TextEditingController();
     focusNode = FocusNode();
-    _scrollController = ScrollController();
+    scrollController = ScrollController();
     super.initState();
   }
 
@@ -38,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     textEditingController.dispose();
     focusNode.dispose();
-    _scrollController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -56,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
             onPressed: () async {
               await Services.showModalSheet(context: context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.more_vert_rounded,
               color: Colors.white,
             ),
@@ -68,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Flexible(
               child: ListView.builder(
-                  controller: _scrollController,
+                  controller: scrollController,
                   itemCount: chatsProvider.getChatList.length,
                   itemBuilder: (context, index) {
                     return ChatWidget(
@@ -78,10 +75,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   }),
             ),
             // 다수의 자식들을 리턴할 때 사용하는 문법
-            if (_isTyping) ...[
+            if (chatsProvider.isTyping) ...[
               const SpinKitThreeBounce(
                 color: Colors.white,
-                size: 18,
+                size: 20,
               ),
             ],
             const SizedBox(
@@ -132,16 +129,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void scrollListToEnd() {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: Duration(seconds: 1), curve: Curves.easeOut);
+    scrollController.animateTo(MediaQuery.of(context).size.height,
+        duration: Duration(seconds: 1), curve: Curves.ease);
   }
 
   Future<void> sendMessageGPT(
       {required ModelsProvider modelsProvider,
       required ChatsProvider chatsProvider}) async {
-    if (_isTyping) {
+    if (chatsProvider.isTyping) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: TextWidget(label: "메세지를 전송 중입니다."),
           backgroundColor: Colors.red,
         ),
@@ -150,7 +147,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     if (textEditingController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: TextWidget(label: "메세지를 입력해 주세요."),
           backgroundColor: Colors.red,
         ),
@@ -159,26 +156,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     try {
       var msg = textEditingController.text;
-      setState(() {
-        _isTyping = true;
+      chatsProvider.setIsTyping(true);
 
-        chatsProvider.addUserMessage(msg: msg);
-        textEditingController.clear();
-        focusNode.unfocus();
-      });
-      chatsProvider.sendMessageAndGetAnswer(
+      chatsProvider.addUserMessage(msg: msg);
+
+      textEditingController.clear();
+      focusNode.unfocus();
+
+      scrollListToEnd();
+      chatsProvider
+          .sendMessageAndGetAnswer(
         msg: msg,
         chosenModelId: modelsProvider.getCurrentModel,
-      );
-
-      setState(() {});
+      )
+          .then((value) {
+        chatsProvider.setIsTyping(false);
+        scrollListToEnd();
+      });
     } catch (error) {
       log("error : $error");
-    } finally {
-      setState(() {
-        scrollListToEnd();
-        _isTyping = false;
-      });
     }
   }
 }

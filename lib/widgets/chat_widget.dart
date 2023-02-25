@@ -1,8 +1,10 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chatgpt_app_using_flutter/constants/constants.dart';
+import 'package:chatgpt_app_using_flutter/providers/chats_provider.dart';
 import 'package:chatgpt_app_using_flutter/services/assets_manager.dart';
 import 'package:chatgpt_app_using_flutter/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatWidget extends StatelessWidget {
   const ChatWidget({
@@ -14,6 +16,7 @@ class ChatWidget extends StatelessWidget {
   final int chatIndex;
   @override
   Widget build(BuildContext context) {
+    final chatsProvider = Provider.of<ChatsProvider>(context);
     return Column(
       children: [
         Material(
@@ -38,41 +41,32 @@ class ChatWidget extends StatelessWidget {
                         ? TextWidget(
                             label: msg,
                           )
-                        : DefaultTextStyle(
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                            child: AnimatedTextKit(
-                              isRepeatingAnimation: false,
-                              repeatForever: false,
-                              displayFullTextOnTap: true,
-                              totalRepeatCount: 1,
-                              animatedTexts: [
-                                TyperAnimatedText(
-                                  msg.trim(),
-                                ),
-                              ],
-                            ),
-                          )),
-                chatIndex == 0
-                    ? SizedBox.shrink()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.thumb_up_alt_outlined,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Icon(Icons.thumb_down_alt_outlined,
-                              color: Colors.white),
-                        ],
-                      )
+                        : TextWidget(
+                            label: msg,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          )
+
+                    // DefaultTextStyle(
+                    //     style: const TextStyle(
+                    //       color: Colors.white,
+                    //       fontWeight: FontWeight.w700,
+                    //       fontSize: 16,
+                    //     ),
+                    //     child: AnimatedTextKit(
+                    //       isRepeatingAnimation: false,
+                    //       repeatForever: false,
+                    //       displayFullTextOnTap: true,
+                    //       totalRepeatCount: 0,
+                    //       animatedTexts: [
+                    //         TyperAnimatedText(
+                    //           msg.trim(),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   )
+                    ),
+                //SizedBox.shrink(),
               ],
             ),
           ),
