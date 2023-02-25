@@ -4,10 +4,10 @@ openAI api를 이용하여 chatGPT를 이용할 수 있도록 만든 플러터 �
 
 ## 접속화면
 
-![Alt text](c:/Users/akma5/Downloads/hushush.link_8080_(iPhone%20SE).png)
+![hushush link_8080_(iPhone SE)](https://user-images.githubusercontent.com/66403979/221361351-c5f9dc4c-ebdd-4032-844f-8d61c746e8e9.png)
 
 ## 대화화면
 
-![Alt text](c:/Users/akma5/Downloads/hushush.link_8080_(iPhone%20SE)%20(1).png)
+![hushush link_8080_(iPhone SE) (1)](https://user-images.githubusercontent.com/66403979/221361356-46d0080b-ec14-4386-985a-d5e97a379cde.png)
 
 
