@@ -47,7 +47,7 @@ class ApiService {
           body: utf8.encode(jsonEncode({
             "model": modelid,
             "prompt": message,
-            "max_tokens": 1000,
+            "max_tokens": 500,
           })));
 
       Map jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));

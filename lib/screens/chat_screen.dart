@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chatgpt_app_using_flutter/constants/constants.dart';
@@ -22,6 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController textEditingController;
   late FocusNode focusNode;
   late ScrollController scrollController;
+  late Timer timer;
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
     textEditingController.dispose();
     focusNode.dispose();
     scrollController.dispose();
+    timer.cancel();
     super.dispose();
   }
 
@@ -64,15 +67,19 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             Flexible(
-              child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: chatsProvider.getChatList.length,
-                  itemBuilder: (context, index) {
-                    return ChatWidget(
-                      msg: chatsProvider.getChatList[index].msg,
-                      chatIndex: chatsProvider.getChatList[index].chatIndex,
-                    );
-                  }),
+              child: ScrollConfiguration(
+                behavior: const ScrollBehavior().copyWith(overscroll: false),
+                child: ListView.builder(
+                    physics: const RangeMaintainingScrollPhysics(),
+                    controller: scrollController,
+                    itemCount: chatsProvider.getChatList.length,
+                    itemBuilder: (context, index) {
+                      return ChatWidget(
+                        msg: chatsProvider.getChatList[index].msg,
+                        chatIndex: chatsProvider.getChatList[index].chatIndex,
+                      );
+                    }),
+              ),
             ),
             // 다수의 자식들을 리턴할 때 사용하는 문법
             if (chatsProvider.isTyping) ...[
@@ -131,9 +138,24 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void scrollListToEnd() {
-    scrollController.animateTo(MediaQuery.of(context).size.height,
-        duration: Duration(seconds: 1), curve: Curves.ease);
+  void scrollListToEnd({bool isBot = false, ChatsProvider? chatsProvider}) {
+    if (isBot) {
+      chatsProvider!.setIsAnimating(true);
+      timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        scrollController.animateTo(scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 100), curve: Curves.ease);
+        if (!chatsProvider.isAnimating) {
+          timer.cancel();
+        }
+      });
+    } else {
+      Timer(
+          const Duration(milliseconds: 10),
+          () => scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(seconds: 1),
+              curve: Curves.ease));
+    }
   }
 
   Future<void> sendMessageGPT(
@@ -174,7 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
       )
           .then((value) {
         chatsProvider.setIsTyping(false);
-        scrollListToEnd();
+        scrollListToEnd(isBot: true, chatsProvider: chatsProvider);
       });
     } catch (error) {
       log("error : $error");

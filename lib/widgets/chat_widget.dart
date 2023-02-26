@@ -39,33 +39,35 @@ class ChatWidget extends StatelessWidget {
                 Expanded(
                     child: chatIndex == 0
                         ? TextWidget(
-                            label: msg,
+                            label: msg.trimLeft(),
                           )
-                        : TextWidget(
-                            label: msg,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          )
+                        :
+                        // TextWidget(
+                        //     label: msg.trimLeft(),
+                        //     fontWeight: FontWeight.w700,
+                        //     fontSize: 16,
+                        //   )
 
-                    // DefaultTextStyle(
-                    //     style: const TextStyle(
-                    //       color: Colors.white,
-                    //       fontWeight: FontWeight.w700,
-                    //       fontSize: 16,
-                    //     ),
-                    //     child: AnimatedTextKit(
-                    //       isRepeatingAnimation: false,
-                    //       repeatForever: false,
-                    //       displayFullTextOnTap: true,
-                    //       totalRepeatCount: 0,
-                    //       animatedTexts: [
-                    //         TyperAnimatedText(
-                    //           msg.trim(),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   )
-                    ),
+                        DefaultTextStyle(
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                            child: AnimatedTextKit(
+                              isRepeatingAnimation: false,
+                              repeatForever: false,
+                              displayFullTextOnTap: true,
+                              totalRepeatCount: 0,
+                              onFinished: () =>
+                                  chatsProvider.setIsAnimating(false),
+                              animatedTexts: [
+                                TyperAnimatedText(
+                                  msg.trim(),
+                                ),
+                              ],
+                            ),
+                          )),
                 //SizedBox.shrink(),
               ],
             ),

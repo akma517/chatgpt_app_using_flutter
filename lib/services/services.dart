@@ -14,7 +14,12 @@ class Services {
         context: context,
         builder: (context) {
           return Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.fromLTRB(
+              36.0,
+              18.0,
+              36.0,
+              18.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
