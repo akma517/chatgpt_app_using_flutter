@@ -149,12 +149,8 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       });
     } else {
-      Timer(
-          const Duration(milliseconds: 10),
-          () => scrollController.animateTo(
-              scrollController.position.maxScrollExtent,
-              duration: const Duration(seconds: 1),
-              curve: Curves.ease));
+      scrollController.animateTo(scrollController.position.maxScrollExtent,
+          duration: const Duration(seconds: 1), curve: Curves.ease);
     }
   }
 

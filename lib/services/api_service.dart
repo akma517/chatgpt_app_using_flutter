@@ -7,6 +7,8 @@ import 'package:chatgpt_app_using_flutter/models/chat_model.dart';
 import 'package:chatgpt_app_using_flutter/models/models_model.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:chatgpt_app_using_flutter/constants/constants.dart';
+
 class ApiService {
   // 이용 가능한 AI Model들을 가져옴
   static Future<List<ModelsModel>> getModels() async {
@@ -46,7 +48,7 @@ class ApiService {
         'gpt-3.5-turbo',
         'gpt-3.5-turbo-0301',
       ].contains(modelId)) {
-        response = await http.post(Uri.parse("$BASE_URI/completions"),
+        response = await http.post(Uri.parse("$CHAT_URI/completions"),
             headers: {
               "Authorization": "Bearer $API_KEY",
               "Content-Type": "application/json",
@@ -90,7 +92,7 @@ class ApiService {
           chatList = List.generate(
             jsonResponse["choices"].length,
             (index) => ChatModel(
-              msg: jsonResponse["choices"][index]["text"],
+              msg: jsonResponse["choices"][index]["message"]["content"],
               chatIndex: 1,
             ),
           );
@@ -98,7 +100,7 @@ class ApiService {
           chatList = List.generate(
             jsonResponse["choices"].length,
             (index) => ChatModel(
-              msg: jsonResponse["choices"][index]["message"]["content"],
+              msg: jsonResponse["choices"][index]["text"],
               chatIndex: 1,
             ),
           );
