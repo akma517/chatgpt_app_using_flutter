@@ -33,7 +33,7 @@ class ChatsProvider with ChangeNotifier {
     chatList.addAll(
       await ApiService.sendMessage(
         message: msg,
-        modelid: chosenModelId,
+        modelId: chosenModelId,
       ),
     );
     notifyListeners();
